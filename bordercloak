@@ -32,6 +32,138 @@ import gtk
 
 version = '0.1development'
 
+class Menu(object):
+    def __init__(self, window, container=None):
+        self.window = window
+        if container: self.window.remove(container)
+
+        self.box = gtk.VBox(False, 10)
+        self.window.add(self.box)
+        self.box.show()
+
+        self.label1 = gtk.Label('Traveling? Excellent! Choose one:')
+        self.box.pack_start(self.label1, True, True, 0)
+        self.label1.show()
+
+        self.package_button = gtk.Button("Compress, Encrypt, Upload")
+        self.package_button.connect("clicked", self.package, None)
+        self.box.add(self.package_button)
+        self.package_button.show()
+
+        self.unpackage_button = gtk.Button("Download, Decrypt, Extract")
+        self.unpackage_button.connect("clicked", self.unpackage, None)
+        self.box.add(self.unpackage_button)
+        self.unpackage_button.show()
+
+    def package(self, widget, data=None):
+        Package(self.window, self.box)
+    
+    def unpackage(self, widget, data=None):
+        Unpackage(self.window, self.box)
+
+class Package(object):
+    def __init__(self, window, container=None):
+        self.window = window
+        if container: self.window.remove(container)
+
+        self.box = gtk.VBox(False, 10)
+        self.window.add(self.box)
+        self.box.show()
+
+        # step 1
+        self.label1 = gtk.Label('Step 1: Choose the folders you would like to have access to')
+        self.box.pack_start(self.label1, True, True, 0)
+        self.label1.show()
+
+        self.step1_box = gtk.HBox(False, 10)
+        self.box.pack_start(self.step1_box, True, True, 0)
+        self.step1_box.show()
+
+        # todo: make a list of folders that have been selected
+        self.folder_list = gtk.Label('this is a placeholder\na list of folders\nthat get selected')
+        self.step1_box.pack_start(self.folder_list, True, True, 0)
+        self.folder_list.show()
+
+        self.step1_buttons_box = gtk.VBox(False, 10)
+        self.step1_box.pack_start(self.step1_buttons_box, True, True, 0)
+        self.step1_buttons_box.show()
+
+        # todo: make folder_chooser only let you choose folders, not files
+        self.folder_chooser = gtk.FileChooserButton('Select a folder')
+        self.step1_buttons_box.pack_start(self.folder_chooser, True, True, 0)
+        self.folder_chooser.show()
+
+        self.delete_folder_button = gtk.Button('Delete')
+        self.step1_buttons_box.pack_start(self.delete_folder_button, True, True, 0)
+        self.delete_folder_button.show()
+
+        # step 2
+        self.label2 = gtk.Label('Step 2: Choose an encryption passphrase (memorize it!)')
+        self.box.pack_start(self.label2, True, True, 0)
+        self.label2.show()
+
+        self.passphrase = gtk.Entry()
+        self.passphrase.set_visibility(False)
+        self.box.pack_start(self.passphrase, True, True, 0)
+        self.passphrase.show()
+
+        # step 3
+        self.label3 = gtk.Label('Step 3: SSH credentials')
+        self.box.pack_start(self.label3, True, True, 0)
+        self.label3.show()
+
+        self.ssh_host_box = gtk.HBox(False, 10)
+        self.box.pack_start(self.ssh_host_box, True, True, 0)
+        self.ssh_host_box.show()
+        self.ssh_host_label = gtk.Label("Host")
+        self.ssh_host_box.pack_start(self.ssh_host_label, True, True, 0)
+        self.ssh_host_label.show()
+        self.ssh_host_entry = gtk.Entry()
+        self.ssh_host_box.pack_start(self.ssh_host_entry, True, True, 0)
+        self.ssh_host_entry.show()
+
+        self.ssh_username_box = gtk.HBox(False, 10)
+        self.box.pack_start(self.ssh_username_box, True, True, 0)
+        self.ssh_username_box.show()
+        self.ssh_username_label = gtk.Label("Username")
+        self.ssh_username_box.pack_start(self.ssh_username_label, True, True, 0)
+        self.ssh_username_label.show()
+        self.ssh_username_entry = gtk.Entry()
+        self.ssh_username_box.pack_start(self.ssh_username_entry, True, True, 0)
+        self.ssh_username_entry.show()
+
+        self.ssh_password_box = gtk.HBox(False, 10)
+        self.box.pack_start(self.ssh_password_box, True, True, 0)
+        self.ssh_password_box.show()
+        self.ssh_password_label = gtk.Label("Password")
+        self.ssh_password_box.pack_start(self.ssh_password_label, True, True, 0)
+        self.ssh_password_label.show()
+        self.ssh_password_entry = gtk.Entry()
+        self.ssh_password_entry.set_visibility(False)
+        self.ssh_password_box.pack_start(self.ssh_password_entry, True, True, 0)
+        self.ssh_password_entry.show()
+
+        self.ssh_location_box = gtk.HBox(False, 10)
+        self.box.pack_start(self.ssh_location_box, True, True, 0)
+        self.ssh_location_box.show()
+        self.ssh_location_label = gtk.Label("Location")
+        self.ssh_location_box.pack_start(self.ssh_location_label, True, True, 0)
+        self.ssh_location_label.show()
+        self.ssh_location_entry = gtk.Entry()
+        self.ssh_location_entry.set_text('~/bordercloak.crypt')
+        self.ssh_location_box.pack_start(self.ssh_location_entry, True, True, 0)
+        self.ssh_location_entry.show()
+
+
+
+
+class Unpackage(object):
+    def __init__(self, window, container=None):
+        self.window = window
+        if container: self.window.remove(container)
+        
+        print 'Download, Decrypt, Extract'
+
 class BorderCloak(object):
     def __init__(self):
         # open a window
@@ -41,37 +173,12 @@ class BorderCloak(object):
         self.window.set_border_width(10)
         self.window.connect("delete_event", self.delete_event)
         self.window.connect("destroy", self.destroy)
-        
-        # vertical box
-        self.box = gtk.VBox(False, 10)
-        self.window.add(self.box)
-        self.box.show()
 
-        # label
-        self.label1 = gtk.Label('Traveling? Excellent! Choose one:')
-        self.box.pack_start(self.label1, True, True, 0)
-        self.label1.show()
-
-        # buttons
-        self.package_button = gtk.Button("Compress, Encrypt, and Upload")
-        self.package_button.connect("clicked", self.package, None)
-        self.box.add(self.package_button)
-        self.package_button.show()
-
-        self.unpackage_button = gtk.Button("Download, Decrypt, Extract")
-        self.unpackage_button.connect("clicked", self.unpackage, None)
-        self.box.add(self.unpackage_button)
-        self.unpackage_button.show()
-        
+        Menu(self.window)
+       
         # show the window
         self.window.show()
         gtk.main()
-
-    def package(self, widget, data=None):
-        print 'package clicked'
-    
-    def unpackage(self, widget, data=None):
-        print 'unpackage clicked'
 
     # exit
     def delete_event(self, widget, event, data=None):
